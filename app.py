@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os 
 
 app = Flask(__name__)
@@ -38,14 +38,20 @@ usuarios = [
 
 ]
 
-@app.route("/usuarios", methods=["GET"])
+@app.route('/')
 def home():
     return jsonify({"mensagem": "API de usuarios - Acesse /usuarios"})
 
-@app.route("/", methods=["GET"])
+@app.route('/usuarios', methods=['GET'])
 def listar_usuarios():
     return jsonify(usuarios)
 
-if __name__ == "_main_":
-   port = int(os.environ.get("PORT,",5000))
-   app.run(host="0.0.0.0", port=port)
+@app.route('/usuarios', methods=['POST'])
+def criar_usuario():
+    novo = request.json
+    novo['id'] = len(usuarios) + 1
+    usuarios.append(novo)
+    return jsonify(novo), 201
+
+if __name__ == '__main__':
+    app.run(debug=True)
